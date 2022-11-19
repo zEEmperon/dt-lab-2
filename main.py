@@ -58,14 +58,21 @@ def main():
     # bisection method
     # https://docs.python.org/3/library/bisect.html
     # use scipy optimize algorithms
-    x = 17
-    y = 2
-    r = 0.5
 
-    print(get_W_x_y(x, y, r))
-    print(get_W_y_div_x(x, y, r))
-    print(get_W_x(x))
-    print(get_W_y(y))
+    # Error variance dependence from correlation coef
+    label = "Залежність дисперсії похибки прогнозування від зміни коефіцієнту кореляції"
+    r_arr = list(map(lambda r: r / 10, range(0, 11)))
+    d_delta_y_arr = list(map(lambda r: round(r * d_delta_y(r / 10), 1), range(0, 11)))
+
+    col_names = ["r", "D(delta y)"]
+    table_data = np.vstack((r_arr, d_delta_y_arr)).T
+
+    print("\n", label)
+    print(tabulate(table_data, headers=col_names, tablefmt="fancy_grid"))
+
+    plt.plot(r_arr, d_delta_y_arr)
+    plt.title(label)
+    plt.show()
 
 
 if __name__ == '__main__':
