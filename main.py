@@ -72,9 +72,34 @@ def main():
 
     plt.plot(r_arr, d_delta_y_arr)
     plt.title(label)
+    plt.xlabel('r')
+    plt.ylabel('D(delta y)')
     plt.show()
 
     # W(y)
+    label = "Значення кривої безумовної густини розподілу прогнозованого параметра W(y)"
+    sigma_y_coefs = list(set(np.array([*map(lambda x: [-x, x], [0, 1, 2, 3, 4, 5, 10, 15])]).flatten()))
+    sigma_y_coefs.sort()
+    y_arr = list(map(lambda x: My + x * 0.2, sigma_y_coefs))
+    W_y_arr = list(map(lambda y: get_W_y(y), y_arr))
+    y_labels = list(map(lambda x:
+                        'My' + (x if x != ' - 0.0 * sigma_y' else ''),
+                        list(map(
+                            lambda coef: (' + ' if coef > 0 else ' - ') + str(abs(round(coef * 0.2, 1))) + ' * sigma_y',
+                            sigma_y_coefs))))
+
+    col_names = ["Формула для y", "y", "W(y)"]
+    table_data = np.vstack((y_labels, y_arr, W_y_arr)).T
+
+    print()
+    print(label)
+    print(tabulate(table_data, headers=col_names, tablefmt="fancy_grid"))
+
+    plt.plot(y_arr, W_y_arr)
+    plt.title(label)
+    plt.xlabel('y')
+    plt.ylabel('W(y)')
+    plt.show()
 
 
 if __name__ == '__main__':
