@@ -59,7 +59,7 @@ def main():
     # https://docs.python.org/3/library/bisect.html
     # use scipy optimize algorithms
 
-    # Error variance dependence from correlation coef
+    # D[y]
     label = "Залежність дисперсії похибки прогнозування від зміни коефіцієнту кореляції"
     r_arr = list(map(lambda r: r / 10, range(0, 11)))
     d_delta_y_arr = list(map(lambda r: round(r * d_delta_y(r / 10), 1), range(0, 11)))
@@ -73,6 +73,8 @@ def main():
     plt.plot(r_arr, d_delta_y_arr)
     plt.title(label)
     plt.show()
+
+    # W(y)
 
 
 if __name__ == '__main__':
