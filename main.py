@@ -15,7 +15,7 @@ X_arr = range(13, 17)
 
 
 def get_m_y_div_x(x, r):
-    return Mx + r * (sigma_y / sigma_x) * (x - Mx)
+    return sigma_x * My + (r * sigma_y * (x - Mx)) / sigma_x
 
 
 def get_d_delta_y(r):
@@ -103,6 +103,9 @@ def main():
     plt.ylabel('W(y)')
     plt.show()
 
+    y_arr_to_compare = y_arr
+    w_y_arr_to_compare = W_y_arr
+
     # W(y/x(j))
     label = "Значення кривих густин умовного розподілу W(y/x(j))"
 
@@ -148,6 +151,17 @@ def main():
 
     plt.plot(display_x_arr, w_y_div_x_r1)
     # plt.plot(display_x_arr, w_y_div_x_r2)
+    plt.show()
+
+    y_arr_to_compare2 = calculate_m_y_div_x(x=X_arr[0], r=R1)
+    w_y_div_x_to_compare = list(map(lambda y: get_W_y_div_x(X_arr[0], y, R1), y_arr_to_compare2))
+
+    plt.plot(y_arr_to_compare, w_y_arr_to_compare, label="W(y)")
+    plt.plot(y_arr_to_compare2, w_y_div_x_to_compare, label="W(y/x(0))")
+    plt.xlabel("y")
+    plt.ylabel("Густина розподілу")
+    plt.title("Порівняння умовної і безумовної густин розподілу")
+    plt.legend()
     plt.show()
 
 
