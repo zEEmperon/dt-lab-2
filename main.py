@@ -2,6 +2,7 @@ import math
 from tabulate import tabulate
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.optimize import minimize
 
 # Variant 14
 Mx = 15
@@ -154,7 +155,7 @@ def main():
     plt.show()
 
     # W(x,y)
-    x = X_arr[2]
+    x = X_arr[1]
     r = R1
     y_arr = range(15, 36)
     w_x_y_results = list(map(lambda y: get_W_x_y(x, y, r), y_arr))
@@ -162,6 +163,15 @@ def main():
     plt.plot(y_arr, w_x_y_results, label="W(x, y), де x = {} і r = {}".format(x, r))
     plt.legend()
     plt.show()
+
+    fun_to_minimize = lambda y: get_W_x_y(x, y, r)
+
+    conditional_math_expectation = get_m_y_div_x(x, r)
+    optimal = minimize(fun_to_minimize, x0=y_arr[0], method="Powell").x
+
+    print()
+    print("Оптимальна оцінка прогнозованого параметру знайдена за допомогою метода Пауела (y опт):", optimal)
+    print("Абсолютна похибка:", abs(conditional_math_expectation - optimal))
 
 
 if __name__ == '__main__':
