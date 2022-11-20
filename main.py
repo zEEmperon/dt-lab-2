@@ -1,7 +1,6 @@
 import math
 from tabulate import tabulate
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
 
 # Variant 14
@@ -28,33 +27,25 @@ def get_d_y_div_x(r):
 
 def get_W_x_y(x, y, r):
     return (1 / (2 * math.pi * sigma_x * sigma_y * math.sqrt(1 - r ** 2))) \
-           * math.exp((-1 / 2 * (1 - r ** 2)
-                       * abs((x - Mx) ** 2 / sigma_x ** 2
-                             - ((2 * r * (x - Mx) * (y - My)) / (sigma_x * sigma_y))
-                             + ((y - My) ** 2 / sigma_y ** 2)
-                             )))
+           * math.exp((-1) / (2 * (1 - (r ** 2)))) * (
+                   ((x - Mx) * (x - Mx)) / (sigma_x ** 2) - (2 * r * (x - Mx) * (y - My)) / (sigma_x * sigma_y) + (
+                   (y - My) * (y - My)) / (sigma_y ** 2))
 
 
 def get_W_x(x):
-    return (1 / (sigma_x * math.sqrt(2 * math.pi))) \
-           * math.e ** (-((x - Mx) ** 2) / 2 * sigma_x ** 2)
+    return (1 / (sigma_x * math.sqrt(2 * math.pi))) * math.exp(-1 * ((x - Mx) * (x - Mx)) / (2 * sigma_x ** 2))
 
 
 def get_W_y(y):
-    return (1 / (sigma_y * math.sqrt(2 * math.pi))) \
-           * math.e ** (-((y - My) ** 2) / 2 * sigma_y ** 2)
+    return (1 / (sigma_y * math.sqrt(2 * math.pi))) * math.exp(-1 * ((y - My) * (y - My)) / (2 * sigma_y ** 2))
 
 
-def get_W_y_div_x(x, y, r):  # not sure
+def get_W_y_div_x(x, y, r):
     return (1 / (sigma_y * math.sqrt(2 * math.pi + (1 - r ** 2)))) \
-           * math.exp((-1 / (2 * sigma_y ** 2 * (1 - r ** 2))) * abs(y - My - (sigma_y * (x - Mx)/sigma_x)))
+           * math.exp((-1 / (2 * sigma_y ** 2 * (1 - r ** 2))) * (y - My - (sigma_y * (x - Mx) / sigma_x)))
 
 
 def main():
-    # bisection method
-    # https://docs.python.org/3/library/bisect.html
-    # use scipy optimize algorithms
-
     # D[y]
     label = "Залежність дисперсії похибки прогнозування від зміни коефіцієнту кореляції"
     r_arr = list(map(lambda r: r / 10, range(0, 11)))
@@ -103,7 +94,7 @@ def main():
     plt.ylabel('W(y)')
     plt.show()
 
-    y_arr_to_compare = y_arr
+    y_arr_for_non_conditional_distribution = y_arr
     w_y_arr_to_compare = W_y_arr
 
     # W(y/x(j))
@@ -146,21 +137,29 @@ def main():
     display_x_arr = X_arr
 
     result_column = np.array(w_y_div_x_results).T[0]
-    w_y_div_x_r1 = result_column[0:len(result_column)//2]
-    # w_y_div_x_r2 = result_column[len(result_column)//2:]
+    w_y_div_x_r1 = result_column[0:len(result_column) // 2]
 
     plt.plot(display_x_arr, w_y_div_x_r1)
-    # plt.plot(display_x_arr, w_y_div_x_r2)
     plt.show()
 
-    y_arr_to_compare2 = calculate_m_y_div_x(x=X_arr[0], r=R1)
-    w_y_div_x_to_compare = list(map(lambda y: get_W_y_div_x(X_arr[0], y, R1), y_arr_to_compare2))
+    y_arr_for_conditional_distribution = calculate_m_y_div_x(x=X_arr[0], r=R1)
+    w_y_div_x_to_compare = list(map(lambda y: get_W_y_div_x(X_arr[0], y, R1), y_arr_for_conditional_distribution))
 
-    plt.plot(y_arr_to_compare, w_y_arr_to_compare, label="W(y)")
-    plt.plot(y_arr_to_compare2, w_y_div_x_to_compare, label="W(y/x(0))")
+    plt.plot(y_arr_for_non_conditional_distribution, w_y_arr_to_compare, label="W(y)")
+    plt.plot(y_arr_for_conditional_distribution, w_y_div_x_to_compare, label="W(y/x(0))")
     plt.xlabel("y")
     plt.ylabel("Густина розподілу")
     plt.title("Порівняння умовної і безумовної густин розподілу")
+    plt.legend()
+    plt.show()
+
+    # W(x,y)
+    x = X_arr[2]
+    r = R1
+    y_arr = range(15, 36)
+    w_x_y_results = list(map(lambda y: get_W_x_y(x, y, r), y_arr))
+
+    plt.plot(y_arr, w_x_y_results, label="W(x, y), де x = {} і r = {}".format(x, r))
     plt.legend()
     plt.show()
 
