@@ -158,7 +158,7 @@ def main():
     x = X_arr[1]
     r = R1
     y_arr = range(15, 36)
-    w_x_y_results = list(map(lambda y: get_W_x_y(x, y, r), y_arr))
+    w_x_y_results = list(map(lambda y: -get_W_x_y(x, y, r), y_arr))
 
     plt.plot(y_arr, w_x_y_results, label="W(x, y), де x = {} і r = {}".format(x, r))
     plt.legend()
